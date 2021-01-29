@@ -10,7 +10,7 @@ class Attributes<T>{
         Object.assign(this.data, update);
     }
 
-    get allData(): T {
+    getAll = (): T => {
         return this.data;
     }
 }

@@ -128,21 +128,24 @@ var Eventing =
 /** @class */
 function () {
   function Eventing() {
+    var _this = this;
+
     this.events = {};
+
+    this.on = function (eventName, callback) {
+      var handlers = _this.events[eventName] || [];
+      handlers.push(callback);
+      _this.events[eventName] = handlers;
+    };
+
+    this.trigger = function (eventName) {
+      if (!_this.events[eventName]) return;
+
+      _this.events[eventName].forEach(function (callback) {
+        return callback();
+      });
+    };
   }
-
-  Eventing.prototype.on = function (eventName, callback) {
-    var handlers = this.events[eventName] || [];
-    handlers.push(callback);
-    this.events[eventName] = handlers;
-  };
-
-  Eventing.prototype.trigger = function (eventName) {
-    if (!this.events[eventName]) return;
-    this.events[eventName].forEach(function (callback) {
-      return callback();
-    });
-  };
 
   return Eventing;
 }();
@@ -2012,22 +2015,162 @@ function () {
     this.set = function (update) {
       Object.assign(_this.data, update);
     };
+
+    this.getAll = function () {
+      return _this.data;
+    };
   }
 
   ;
-  Object.defineProperty(Attributes.prototype, "allData", {
-    get: function get() {
-      return this.data;
-    },
-    enumerable: false,
-    configurable: true
-  });
   return Attributes;
 }();
 
 exports.default = Attributes;
-},{}],"src/models/User.ts":[function(require,module,exports) {
+},{}],"src/models/Model.ts":[function(require,module,exports) {
 "use strict";
+
+var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator = this && this.__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
@@ -2045,37 +2188,36 @@ var Sync_1 = __importDefault(require("./Sync"));
 
 var Attributes_1 = __importDefault(require("./Attributes"));
 
-var User =
+var Model =
 /** @class */
 function () {
-  function User(attr) {
+  function Model(attr) {
     this.eventHandler = new Eventing_1.default();
     this.syncer = new Sync_1.default('http://localhost:3000/users');
     this.attributes = new Attributes_1.default(attr);
   }
 
-  Object.defineProperty(User.prototype, "get", {
+  Object.defineProperty(Model.prototype, "get", {
     get: function get() {
       return this.attributes.get;
     },
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(User.prototype, "set", {
-    get: function get() {
-      return this.attributes.set;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(User.prototype, "on", {
+
+  Model.prototype.set = function (update) {
+    this.attributes.set(update);
+    this.trigger('change');
+  };
+
+  Object.defineProperty(Model.prototype, "on", {
     get: function get() {
       return this.eventHandler.on;
     },
     enumerable: false,
     configurable: true
   });
-  Object.defineProperty(User.prototype, "trigger", {
+  Object.defineProperty(Model.prototype, "trigger", {
     get: function get() {
       return this.eventHandler.trigger;
     },
@@ -2083,23 +2225,97 @@ function () {
     configurable: true
   });
 
-  User.prototype.save = function () {
-    return this.syncer.save(this.attributes.allData);
-  };
-
-  User.prototype.fetch = function () {
+  Model.prototype.save = function () {
     var _this = this;
 
-    this.syncer.fetch(this.get('id')).then(function (resp) {
-      return _this.set(resp.data);
+    this.syncer.save(this.attributes.getAll()).then(function () {
+      return _this.trigger('save');
+    }).catch(function () {
+      return _this.trigger('saveError');
     });
   };
 
-  return User;
+  Model.prototype.fetch = function () {
+    return __awaiter(this, void 0, Promise, function () {
+      var id, resp;
+      return __generator(this, function (_a) {
+        switch (_a.label) {
+          case 0:
+            id = this.get('id');
+            if (typeof id !== 'number') throw new Error('Cannot fetch without correct id');
+            return [4
+            /*yield*/
+            , this.syncer.fetch(this.get('id'))];
+
+          case 1:
+            resp = _a.sent();
+            return [2
+            /*return*/
+            , this.set(resp.data)];
+        }
+      });
+    });
+  };
+
+  return Model;
 }();
 
+exports.default = Model;
+},{"./Eventing":"src/models/Eventing.ts","./Sync":"src/models/Sync.ts","./Attributes":"src/models/Attributes.ts"}],"src/models/User.ts":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var Model_1 = __importDefault(require("./Model"));
+
+var User =
+/** @class */
+function (_super) {
+  __extends(User, _super);
+
+  function User() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+
+  return User;
+}(Model_1.default);
+
 exports.default = User;
-},{"./Eventing":"src/models/Eventing.ts","./Sync":"src/models/Sync.ts","./Attributes":"src/models/Attributes.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"./Model":"src/models/Model.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -2115,10 +2331,20 @@ Object.defineProperty(exports, "__esModule", {
 var User_1 = __importDefault(require("./models/User"));
 
 var user = new User_1.default({
-  name: 'Master Programmer',
-  age: 555
+  name: 'JJJ',
+  age: 3
 });
-console.log(user.get('name'));
+user.on('change', function () {
+  return console.log('CHANGED!!');
+});
+user.set({
+  name: 'aloha'
+});
+console.log(user); // (async () => {
+//     await user.fetch();
+//     user.set({name: 'GRANDIOS'});
+//     user.save();
+// })()
 },{"./models/User":"src/models/User.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -2147,7 +2373,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55387" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61605" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
