@@ -2001,19 +2001,27 @@ var Attributes =
 /** @class */
 function () {
   function Attributes(data) {
+    var _this = this;
+
     this.data = data;
+
+    this.get = function (key) {
+      return _this.data[key];
+    };
+
+    this.set = function (update) {
+      Object.assign(_this.data, update);
+    };
   }
 
   ;
-
-  Attributes.prototype.get = function (key) {
-    return this.data[key];
-  };
-
-  Attributes.prototype.set = function (update) {
-    Object.assign(this.data, update);
-  };
-
+  Object.defineProperty(Attributes.prototype, "allData", {
+    get: function get() {
+      return this.data;
+    },
+    enumerable: false,
+    configurable: true
+  });
   return Attributes;
 }();
 
@@ -2046,30 +2054,43 @@ function () {
     this.attributes = new Attributes_1.default(attr);
   }
 
-  User.prototype.get = function (propName) {
-    return this.attributes.get(propName);
-  };
-
-  User.prototype.set = function (update) {
-    this.attributes.set(update);
-  };
-
-  User.prototype.on = function (eventName, callback) {
-    this.eventHandler.on(eventName, callback);
-  };
-
-  User.prototype.trigger = function (eventName) {
-    this.eventHandler.trigger(eventName);
-  };
+  Object.defineProperty(User.prototype, "get", {
+    get: function get() {
+      return this.attributes.get;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(User.prototype, "set", {
+    get: function get() {
+      return this.attributes.set;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(User.prototype, "on", {
+    get: function get() {
+      return this.eventHandler.on;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(User.prototype, "trigger", {
+    get: function get() {
+      return this.eventHandler.trigger;
+    },
+    enumerable: false,
+    configurable: true
+  });
 
   User.prototype.save = function () {
-    return this.syncer.save(this.attributes.data);
+    return this.syncer.save(this.attributes.allData);
   };
 
   User.prototype.fetch = function () {
     var _this = this;
 
-    this.syncer.fetch(this.attributes.data.id).then(function (resp) {
+    this.syncer.fetch(this.get('id')).then(function (resp) {
       return _this.set(resp.data);
     });
   };
@@ -2097,10 +2118,7 @@ var user = new User_1.default({
   name: 'Master Programmer',
   age: 555
 });
-user.set({
-  age: 777
-});
-user.save();
+console.log(user.get('name'));
 },{"./models/User":"src/models/User.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -2129,7 +2147,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59710" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55387" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

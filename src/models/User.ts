@@ -31,28 +31,28 @@ class User{
         this.attributes = new Attributes<UserProps>(attr);
     }
 
-    get<K extends keyof UserProps>(propName: K): UserProps[K]{
-        return this.attributes.get(propName);
+    get get(){
+        return this.attributes.get;
     }
 
-    set(update: UserProps): void{
-        this.attributes.set(update)
+    get set(){
+        return this.attributes.set;
     }
     
-    on(eventName: string, callback: Callback): void{
-        this.eventHandler.on(eventName, callback);
+    get on(){
+       return this.eventHandler.on;
     }
 
-    trigger(eventName: string): void{
-        this.eventHandler.trigger(eventName);
+    get trigger(){
+        return this.eventHandler.trigger;
     }
 
     save(): AxiosPromise{
-        return this.syncer.save(this.attributes.data);
+        return this.syncer.save(this.attributes.allData);
     }
     
-    fetch(){
-        this.syncer.fetch(this.attributes.data.id).then(resp => this.set(resp.data))
+    fetch(): void{
+        this.syncer.fetch(this.get('id')).then(resp => this.set(resp.data))
     }
 }
 export default User;
