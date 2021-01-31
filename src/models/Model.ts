@@ -1,7 +1,5 @@
 import { AxiosPromise } from 'axios';
-import Eventing from './Eventing';
-import Syncaa from './Sync';
-import Attributes from './Attributes';
+
 
 
 interface EventHandler{
@@ -14,6 +12,12 @@ interface Syncer<T>{
     save: (data: T) => AxiosPromise;
 }
 
+interface AttributesINSF<T>{
+    get<K extends keyof T>(key: K): T[K];
+    set(update: T): void;
+    getAll(): T;
+}
+
 interface HasId{
     id?: number;
 }
@@ -21,14 +25,13 @@ interface HasId{
 type Callback = () => void;
 
 
-abstract class Model<T extends HasId> {
-    private eventHandler: EventHandler = new Eventing();
-    private syncer: Syncer<T> = new Syncaa<T>('http://localhost:3000/users');
-    private attributes: Attributes<T>;
+class Model<T extends HasId> {
 
-    constructor(attr: T){
-        this.attributes = new Attributes<T>(attr);
-    }
+    constructor(
+        private eventHandler: EventHandler,
+        private syncer: Syncer<T>,
+        private attributes: AttributesINSF<T>
+    ) {}
 
     get get(){
         return this.attributes.get;
